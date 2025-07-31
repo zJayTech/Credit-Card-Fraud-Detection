@@ -86,6 +86,8 @@ plt.title('Distribution of Transactions (0: Legitimate, 1: Fraud)')
 plt.savefig("Distribution-of-Transactions.png")  # Saving the plot
 plt.show()  # Displaying the plot
 ```
+![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/Distribution-of-Transactions.png?raw=true)
+
 ### 4. Transaction Time and Amount Distributions by Class
 
 Understanding how transaction time and amounts vary between legitimate and fraudulent transactions can help uncover patterns that aid in detection. This section visualizes the distributions for both the `Time` and `Amount` features by class.
@@ -119,6 +121,7 @@ print(df[df['Class'] == 0]['Amount'].describe())
 print("\nAmount Statistics for Fraudulent Transactions:")
 print(df[df['Class'] == 1]['Amount'].describe())
 ```
+![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/Transaction-Time_and_Amount.png?raw=true)
 
 ### 5. Feature Scaling
 
@@ -160,6 +163,8 @@ plt.show()  # Displaying the plot
 # You would repeat this for several 'V' features (e.g., V1, V2, V3, V4, V10, V12, V14, V16, V17, V18 etc.)
 # These are often cited as being important in fraud detection research.
 ```
+![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/Distrubution-of-V1.png?raw=true)
+
 ### 7. Data Splitting for Modeling
 
 Before training any machine learning model, it's a critical best practice to split your dataset into distinct training and testing sets. This step ensures that we can evaluate how well our model generalizes to new, unseen data, rather than just how well it memorizes the data it was trained on (which leads to overfitting).
@@ -234,3 +239,4 @@ coefficients = coefficients.sort_values(by='abs_coefficient', ascending=False)
 print("\nTop 10 Most Important Features (by absolute coefficient):")
 print(coefficients.head(10))
 ```
+![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/ROC-Curve-for-Fraud.png?raw=true)

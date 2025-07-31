@@ -240,3 +240,16 @@ print("\nTop 10 Most Important Features (by absolute coefficient):")
 print(coefficients.head(10))
 ```
 ![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/ROC-Curve-for-Fraud.png?raw=true)
+
+## Conclusion
+
+This project demonstrates a full end-to-end pipeline for detecting credit card fraud using real-world, imbalanced data. By applying key data preprocessing techniques, such as feature scaling and stratified sampling, and building a baseline Logistic Regression model with class weighting, we were able to identify patterns that differentiate fraudulent transactions from legitimate ones.
+
+While Logistic Regression serves as a strong interpretable starting point, future work can include exploring more complex models like Random Forests, XGBoost, or neural networks, as well as experimenting with advanced techniques such as SMOTE for oversampling, anomaly detection methods, or feature engineering to boost performance.
+
+Ultimately, fraud detection remains a high-stakes application of machine learning where model accuracy, interpretability, and robustness must be carefully balanced. This project lays a strong foundation for further experimentation and improvement in this space.
+
+---
+
+**Connect with me on LinkedIn:** [Zack Jones](https://www.linkedin.com/in/zjaytech/)
+**Email:** zackjones.dataanalyst@gmail.com

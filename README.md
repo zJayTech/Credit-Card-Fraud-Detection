@@ -85,3 +85,152 @@ sns.countplot(x='Class', data=df)
 plt.title('Distribution of Transactions (0: Legitimate, 1: Fraud)')
 plt.savefig("Distribution-of-Transactions.png")  # Saving the plot
 plt.show()  # Displaying the plot
+```
+### 4. Transaction Time and Amount Distributions by Class
+
+Understanding how transaction time and amounts vary between legitimate and fraudulent transactions can help uncover patterns that aid in detection. This section visualizes the distributions for both the `Time` and `Amount` features by class.
+
+```python
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Time distribution for each class
+sns.histplot(df[df['Class'] == 0]['Time'], bins=50, ax=axes[0], color='blue', label='Legitimate')
+sns.histplot(df[df['Class'] == 1]['Time'], bins=50, ax=axes[0], color='red', label='Fraud')
+axes[0].set_title('Transaction Time Distribution by Class')
+axes[0].set_xlabel('Time (seconds elapsed from first transaction)')
+axes[0].legend()
+
+# Amount distribution for each class
+sns.histplot(df[df['Class'] == 0]['Amount'], bins=50, ax=axes[1], color='blue', label='Legitimate')
+sns.histplot(df[df['Class'] == 1]['Amount'], bins=50, ax=axes[1], color='red', label='Fraud')
+axes[1].set_title('Transaction Amount Distribution by Class')
+axes[1].set_xlabel('Amount')
+axes[1].set_yscale('log')  # Use log scale due to skewed distribution
+axes[1].legend()
+
+plt.tight_layout()
+plt.savefig("Transaction-Time_and_Amount")  # Save the combined plot
+plt.show()
+
+# Describe Amount for each class
+print("\nAmount Statistics for Legitimate Transactions:")
+print(df[df['Class'] == 0]['Amount'].describe())
+
+print("\nAmount Statistics for Fraudulent Transactions:")
+print(df[df['Class'] == 1]['Amount'].describe())
+```
+
+### 5. Feature Scaling
+
+Many machine learning algorithms perform better or converge faster when numerical input features are scaled to a standard range. The PCA-transformed features (V1 through V28) in this dataset are already scaled. However, the Time and Amount columns are not, and their raw values could disproportionately influence the model due to their larger magnitudes compared to the PCA features.
+
+To address this, we apply StandardScaler to both Time and Amount features. Standardization (or Z-score normalization) scales the data such that it has a mean of 0 and a standard deviation of 1. This ensures all features contribute equally to the distance calculations in algorithms like Logistic Regression.
+
+After scaling, we create a new DataFrame that includes these scaled features and excludes the original Time and Amount columns to avoid redundancy and potential multicollinearity.
+
+```python
+scaler = StandardScaler()
+df['scaled_amount'] = scaler.fit_transform(df['Amount'].values.reshape(-1, 1))
+df['scaled_time'] = scaler.fit_transform(df['Time'].values.reshape(-1, 1))
+
+# Drop original 'Time' and 'Amount' if you prefer to use scaled versions
+df_scaled = df.drop(['Time', 'Amount'], axis=1)
+print(df_scaled.head())
+```
+
+### 6. PCA Feature Exploration
+
+The V features (V1 through V28) in this dataset are the result of a Principal Component Analysis (PCA) transformation. This anonymization is typical in sensitive domains like finance to protect privacy. While we don't know the original meaning of these features, their distributions can still reveal important patterns, especially when comparing legitimate and fraudulent transactions. Features that show distinct differences in their distributions between the two classes are likely strong indicators of fraud.
+
+This section demonstrates how to explore these PCA-transformed features by visualizing their distributions for both legitimate (Class 0) and fraudulent (Class 1) transactions. This helps identify features that are potentially highly discriminative for fraud detection.
+
+```python
+# Example: Plotting V1 for both classes
+fig, ax = plt.subplots(figsize=(8, 6))
+sns.histplot(df_scaled[df_scaled['Class'] == 0]['V1'], bins=50, ax=ax, color='blue', label='Legitimate', kde=True)
+sns.histplot(df_scaled[df_scaled['Class'] == 1]['V1'], bins=50, ax=ax, color='red', label='Fraud', kde=True)
+ax.set_title('Distribution of V1 by Class')
+ax.set_xlabel('V1')
+ax.set_ylabel('Density')
+ax.legend()
+plt.tight_layout()  # Adjust layout to prevent labels from overlapping
+plt.savefig("Distribution-of-V1.png")  # Saving the plot
+plt.show()  # Displaying the plot
+
+# You would repeat this for several 'V' features (e.g., V1, V2, V3, V4, V10, V12, V14, V16, V17, V18 etc.)
+# These are often cited as being important in fraud detection research.
+```
+### 7. Data Splitting for Modeling
+
+Before training any machine learning model, it's a critical best practice to split your dataset into distinct training and testing sets. This step ensures that we can evaluate how well our model generalizes to new, unseen data, rather than just how well it memorizes the data it was trained on (which leads to overfitting).
+
+For highly imbalanced datasets like credit card fraud, a standard random split isn't enough. We need to use stratified sampling to ensure that both the training and testing sets maintain the same proportion of legitimate and fraudulent transactions as the original dataset. This prevents scenarios where, for example, the test set might contain too few (or even zero) fraudulent cases, leading to unreliable evaluation metrics.
+
+```python
+X = df_scaled.drop('Class', axis=1)  # Features (independent variables)
+y = df_scaled['Class']               # Target variable (dependent variable)
+
+# Split data into training and testing sets (80% train, 20% test)
+# stratify=y is CRUCIAL for imbalanced datasets to ensure both train/test sets
+# have similar class distribution as the original dataset.
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+print("Train Class Distribution:\n", y_train.value_counts(normalize=True))
+print("Test Class Distribution:\n", y_test.value_counts(normalize=True))
+```
+
+### 8. Model Training (Logistic Regression Baseline)
+
+With the data preprocessed and split, we are now ready to train our first machine learning model. For this project, we start with Logistic Regression as a baseline classifier. Logistic Regression is a simple, yet powerful and interpretable algorithm, making it an excellent choice for an initial model.
+
+Crucially, given the extreme class imbalance in our credit card fraud dataset, simply training a standard Logistic Regression model would likely lead to poor fraud detection performance. The model would tend to overfit to the majority class (legitimate transactions) and ignore the rare fraud cases. To address this, we leverage the `class_weight='balanced'` parameter.
+
+```python
+# Train a Logistic Regression model as a baseline
+model = LogisticRegression(solver='liblinear', random_state=42, class_weight='balanced')
+# Using class_weight='balanced' is one way to handle imbalance directly within the model
+
+# Fit the model to the training data
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+y_pred_proba = model.predict_proba(X_test)[:, 1]  # Get probabilities for the positive class (fraud)
+```
+### 9. Model Evaluation and Interpretation
+
+After training our Logistic Regression model, the next critical step is to evaluate its performance on the unseen test data. For imbalanced datasets like fraud detection, simply looking at overall accuracy can be misleading (as a model predicting "no fraud" all the time would still be >99% accurate). Therefore, we focus on specific metrics that provide a more nuanced understanding of how well our model identifies the minority class (fraud). We also analyze feature importance to understand which factors contribute most to the model's predictions.
+
+```python
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# ROC AUC Score
+roc_auc = roc_auc_score(y_test, y_pred_proba)
+print(f"\nROC AUC Score: {roc_auc:.4f}")
+
+# Plot ROC Curve
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, label=f'ROC curve (AUC = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], 'k--', label='Random Classifier')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate (Recall)')
+plt.title('ROC Curve for Fraud Detection')
+plt.legend()
+plt.savefig("ROC-Curve-for-Fraud.png")  # Ensure .png extension
+plt.show()
+
+# Analyze feature coefficients/importance (for Logistic Regression, coefficients are importance proxy)
+# Note: For tree-based models, you'd use model.feature_importances_
+coefficients = pd.DataFrame({'feature': X_train.columns, 'coefficient': model.coef_[0]})
+coefficients['abs_coefficient'] = np.abs(coefficients['coefficient'])
+coefficients = coefficients.sort_values(by='abs_coefficient', ascending=False)
+print("\nTop 10 Most Important Features (by absolute coefficient):")
+print(coefficients.head(10))
+```

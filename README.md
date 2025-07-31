@@ -87,6 +87,7 @@ plt.savefig("Distribution-of-Transactions.png")  # Saving the plot
 plt.show()  # Displaying the plot
 ```
 ![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/Distribution-of-Transactions.png?raw=true)
+> This chart dramatically illustrates the severe class imbalance: legitimate transactions vastly outnumber fraudulent ones. This necessitates specialized machine learning techniques and evaluation metrics (beyond simple accuracy) to ensure our model can effectively detect the rare but critical fraud cases.
 
 ### 4. Transaction Time and Amount Distributions by Class
 
@@ -122,6 +123,7 @@ print("\nAmount Statistics for Fraudulent Transactions:")
 print(df[df['Class'] == 1]['Amount'].describe())
 ```
 ![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/Transaction-Time_and_Amount.png?raw=true)
+> While transaction time for fraud largely mirrors legitimate patterns, fraudulent transactions are overwhelmingly concentrated at much smaller amounts compared to legitimate ones, suggesting that low transaction value is a key indicator of fraud in this dataset.
 
 ### 5. Feature Scaling
 
@@ -164,6 +166,7 @@ plt.show()  # Displaying the plot
 # These are often cited as being important in fraud detection research.
 ```
 ![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/Distrubution-of-V1.png?raw=true)
+> The feature V1 is highly discriminative: fraudulent transactions (red) show a distinct spread into more negative values of V1, a range where legitimate transactions (blue) are relatively sparse. This suggests V1 is a powerful indicator for identifying fraud.
 
 ### 7. Data Splitting for Modeling
 
@@ -240,6 +243,7 @@ print("\nTop 10 Most Important Features (by absolute coefficient):")
 print(coefficients.head(10))
 ```
 ![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/ROC-Curve-for-Fraud.png?raw=true)
+> The ROC curve, with an impressive AUC (Area Under Curve) of 0.97, indicates that the model has excellent discriminatory power in distinguishing between legitimate and fraudulent transactions. Its position far above the random classifier line confirms its strong ability to identify fraud while minimizing false alarms.
 
 ## Conclusion
 

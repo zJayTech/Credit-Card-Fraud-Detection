@@ -87,7 +87,7 @@ plt.savefig("Distribution-of-Transactions.png")  # Saving the plot
 plt.show()  # Displaying the plot
 ```
 ![#](https://github.com/zJayTech/Credit-Card-Fraud-Detection/blob/main/Distribution-of-Transactions.png?raw=true)
-> This chart dramatically illustrates the severe class imbalance: legitimate transactions vastly outnumber fraudulent ones. This necessitates specialized machine learning techniques and evaluation metrics (beyond simple accuracy) to ensure our model can effectively detect the rare but critical fraud cases.
+> This chart dramatically illustrates the severe class imbalance: legitimate transactions vastly outnumber fraudulent ones. This necessitates specialized machine learning techniques and evaluation metrics (beyond simple accuracy) to ensure the model can effectively detect the rare but critical fraud cases.
 
 ### 4. Transaction Time and Amount Distributions by Class
 

@@ -18,7 +18,7 @@ This repository serves as a practical demonstration of a data science workflow a
 
 ## Dataset
 
-The dataset utilized for this project is the Credit Card Fraud Detection dataset, generously provided by ULB (Université Libre de Bruxelles) and available on Kaggle.
+The dataset utilized for this project is the [Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud) dataset, generously provided by ULB (Université Libre de Bruxelles) and available on Kaggle.
 
 Key characteristics of the dataset include:
 

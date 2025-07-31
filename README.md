@@ -251,6 +251,6 @@ Ultimately, fraud detection remains a high-stakes application of machine learnin
 
 ---
 
-**Connect with me on LinkedIn:** [Zack Jones](https://www.linkedin.com/in/zjaytech/)
-
+### Connect With Me 
+**LinkedIn:** [Zack Jones](https://www.linkedin.com/in/zjaytech/)
 **Email:** zackjones.dataanalyst@gmail.com
